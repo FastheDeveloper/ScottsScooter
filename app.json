@@ -17,6 +17,12 @@
           "RNMapboxMapsDownloadToken": "sk.eyJ1IjoiZmFzdGhlbWFwcGVyIiwiYSI6ImNsejAzb3puZjJweXEybXFsZ2I4dXlnbjEifQ.wZk0_NHZNDwKnGwJJ4AHPQ",
            "RNMapboxMapsVersion": "11.0.0"
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Show current location on map."
+        }
       ]
     ],
     "experiments": {
