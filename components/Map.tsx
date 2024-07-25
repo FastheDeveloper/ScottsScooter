@@ -18,7 +18,7 @@ const Map = () => {
   );
   return (
     <MapView style={{ flex: 1 }} styleURL="mapbox://styles/mapbox/dark-v11">
-      <Camera followUserLocation followZoomLevel={16} />
+      <Camera followUserLocation followZoomLevel={10} />
       <LocationPuck puckBearingEnabled puckBearing="heading" pulsing={{ isEnabled: true }} />
 
       <ShapeSource id="scooters" shape={featureCollection(points)}>
