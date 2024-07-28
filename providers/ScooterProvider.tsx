@@ -23,28 +23,37 @@ const ScooterContext = createContext<ScooterContextType | null>(null);
 export default function ScooterProvider({ children }: PropsWithChildren) {
   const [selectedScooter, setSelectedScooter] = useState<ScooterDetails>();
   const [newDirection, setNewDirection] = useState<DirectionsApi>();
-  const [isNearby, setIsNearBy] = useState(true);
+  const [isNearby, setIsNearBy] = useState(false);
 
-  // useEffect(() => {
-  //   Location.watchPositionAsync(
-  //     {
-  //       distanceInterval: 100,
-  //     },
-  //     (newLocation) => {
-  //       if (selectedScooter) {
-  //         const from = point((newLocation?.coords?.longitude, newLocation?.coords?.latitude));
-  //         const to = point((selectedScooter?.long, selectedScooter?.lat));
+  useEffect(() => {
+    let subscription: Location.LocationSubscription | undefined;
 
-  //         const distance = getDistance(from, to, { units: 'meters' });
-  //         console.log(distance, ' DIS');
-  //         if (distance < 50) {
-  //           setIsNearBy(true);
-  //         }
-  //       }
-  //       console.log('Location updated', newLocation);
-  //     }
-  //   );
-  // }, []);
+    const watchLocation = async () => {
+      subscription = await Location.watchPositionAsync({ distanceInterval: 10 }, (newLocation) => {
+        if (selectedScooter) {
+          const from = point([newLocation.coords.longitude, newLocation.coords.latitude]);
+          const to = point([selectedScooter.long, selectedScooter.lat]);
+          const distance = getDistance(from, to, { units: 'meters' });
+          console.log(distance, ' dis');
+          if (distance < 100) {
+            setIsNearBy(true);
+          } else if (distance > 100) {
+            setIsNearBy(false);
+          }
+        }
+      });
+    };
+
+    if (selectedScooter) {
+      watchLocation();
+    }
+
+    // unsubscribe
+    return () => {
+      subscription?.remove();
+    };
+  }, [selectedScooter]);
+
   useEffect(() => {
     const fetchDirections = async () => {
       if (selectedScooter) {
