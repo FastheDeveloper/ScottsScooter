@@ -7,7 +7,7 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import { APP_COLOR } from '~/constants/AppConstants';
 import { Button } from './Button';
 export default function SelectedScooterSheet() {
-  const { selectedScooter, routeTime, routeDistance } = useScooter();
+  const { selectedScooter, routeTime, routeDistance, isNearby } = useScooter();
   const bottomSheetRef = useRef<BottomSheet>(null);
   useEffect(() => {
     if (selectedScooter) {
@@ -65,7 +65,15 @@ export default function SelectedScooterSheet() {
         {/* BOTTOM PART */}
 
         <View>
-          <Button title="Start Journey" />
+          <Button
+            title="Start Journey"
+            disabled={!isNearby}
+            style={{
+              backgroundColor: isNearby ? APP_COLOR.ACCENT_GREEN : APP_COLOR.MAIN_GREY,
+              borderColor: !isNearby ? APP_COLOR.ACCENT_GREEN : 'red',
+              borderWidth: !isNearby ? 1 : 0,
+            }}
+          />
         </View>
       </BottomSheetView>
     </BottomSheet>
