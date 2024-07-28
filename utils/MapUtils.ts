@@ -10,7 +10,7 @@ interface Geometry {
   type: string;
 }
 export interface Route {
-  distace: number;
+  distance: number;
   duration: number;
   geometry: Geometry;
   legs: [];

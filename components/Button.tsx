@@ -1,5 +1,6 @@
 import { forwardRef } from 'react';
 import { StyleSheet, Text, TouchableOpacity, TouchableOpacityProps } from 'react-native';
+import { APP_COLOR } from '~/constants/AppConstants';
 
 type ButtonProps = {
   title?: string;
@@ -18,7 +19,7 @@ export const Button = forwardRef<TouchableOpacity, ButtonProps>(
 const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
-    backgroundColor: '#6366F1',
+    backgroundColor: APP_COLOR.ACCENT_GREEN,
     borderRadius: 24,
     elevation: 5,
     flexDirection: 'row',
@@ -33,9 +34,9 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
   },
   buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
+    color: APP_COLOR.MAIN_WHITE,
+    fontSize: 18,
+    fontWeight: '700',
     textAlign: 'center',
   },
 });

@@ -1,9 +1,12 @@
 import { Stack } from 'expo-router';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import ScooterProvider from '~/providers/ScooterProvider';
 export default function Layout() {
   return (
-    <ScooterProvider>
-      <Stack />
-    </ScooterProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ScooterProvider>
+        <Stack />
+      </ScooterProvider>
+    </GestureHandlerRootView>
   );
 }

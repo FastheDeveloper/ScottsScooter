@@ -48,7 +48,7 @@ export default function ScooterProvider({ children }: PropsWithChildren) {
         newDirection,
         directionCoordinates: newDirection?.routes?.[0].geometry.coordinates,
         routeTime: newDirection?.routes?.[0].duration,
-        routeDistance: newDirection?.routes?.[0].distace,
+        routeDistance: newDirection?.routes?.[0].distance,
       }}>
       {children}
     </ScooterContext.Provider>
