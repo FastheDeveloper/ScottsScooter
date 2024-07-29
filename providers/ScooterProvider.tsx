@@ -23,7 +23,7 @@ const ScooterContext = createContext<ScooterContextType | null>(null);
 export default function ScooterProvider({ children }: PropsWithChildren) {
   const [selectedScooter, setSelectedScooter] = useState<ScooterDetails>();
   const [newDirection, setNewDirection] = useState<DirectionsApi>();
-  const [isNearby, setIsNearBy] = useState(false);
+  const [isNearby, setIsNearBy] = useState<boolean>(false);
 
   useEffect(() => {
     let subscription: Location.LocationSubscription | undefined;
