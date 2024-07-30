@@ -59,12 +59,6 @@ Now that you have successfully run the app, let's modify it.
 
 You've successfully run and modified your React Native App. :partying_face:
 
-### Now what?Creating a new Brand
-
-1. Open the `src>core>constants` and update the `APP_ID` and `APP_ID_SYNT` to the brand's APP Id
-2. Open the `src>core>services>awsConfig.jsx` and update the cognito details
-3.
-
 # Troubleshooting
 
 If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
