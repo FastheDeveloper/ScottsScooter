@@ -3,10 +3,19 @@ import * as Location from 'expo-location';
 import { DirectionsApi, getDirections } from '~/utils/MapUtils';
 import getDistance from '@turf/distance';
 import { point } from '@turf/helpers';
+import { supabase } from '~/lib/supabase';
+import { Alert } from 'react-native';
 export interface ScooterDetails {
   id: number;
   lat: number;
   long: number;
+}
+interface RPCScooterDetails {
+  id: number;
+  battery: number;
+  lat: number;
+  long: number;
+  dist_meters: number;
 }
 interface ScooterContextType {
   selectedScooter: ScooterDetails | undefined;
@@ -16,11 +25,13 @@ interface ScooterContextType {
   routeTime: number | undefined;
   routeDistance: number | undefined;
   isNearby: boolean;
+  nearbyScooters: RPCScooterDetails[];
 }
 
 const ScooterContext = createContext<ScooterContextType | null>(null);
 
 export default function ScooterProvider({ children }: PropsWithChildren) {
+  const [nearbyScooters, setNearByScooter] = useState<RPCScooterDetails[]>([]);
   const [selectedScooter, setSelectedScooter] = useState<ScooterDetails>();
   const [newDirection, setNewDirection] = useState<DirectionsApi>();
   const [isNearby, setIsNearBy] = useState<boolean>(false);
@@ -72,9 +83,27 @@ export default function ScooterProvider({ children }: PropsWithChildren) {
     }
   }, [selectedScooter]);
 
+  useEffect(() => {
+    const fetchScooters = async () => {
+      const location = await Location.getCurrentPositionAsync();
+      const { error, data } = await supabase.rpc('nearby_scooters', {
+        lat: location.coords.latitude,
+        long: location.coords.longitude,
+        // max_dist_meters: 2000,
+      });
+      if (error) {
+        Alert.alert('Failed to fetch scooter');
+      } else {
+        setNearByScooter(data);
+      }
+    };
+
+    fetchScooters();
+  }, []);
   return (
     <ScooterContext.Provider
       value={{
+        nearbyScooters,
         selectedScooter,
         setSelectedScooter,
         newDirection,
