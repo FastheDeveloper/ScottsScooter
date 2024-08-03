@@ -6,12 +6,12 @@ import pin from '../assets/pin.png';
 import { OnPressEvent } from '@rnmapbox/maps/lib/typescript/src/types/OnPressEvent';
 import { useScooter } from '../providers/ScooterProvider';
 import { featureCollection, point } from '@turf/helpers';
-import scooters from '../data/scooter.json';
+// import scooters from '../data/scooter.json';
 
 export default function ScooterMarkers() {
-  const { setSelectedScooter } = useScooter();
+  const { setSelectedScooter, nearbyScooters } = useScooter();
 
-  const points = scooters.map((scooter: { long: number; lat: number }) =>
+  const points = nearbyScooters?.map((scooter: { long: number; lat: number }) =>
     point([scooter.long, scooter.lat], { scooter })
   );
 
