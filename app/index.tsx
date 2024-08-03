@@ -1,16 +1,5 @@
-import { Stack, Link, Redirect } from 'expo-router';
-import Map from 'components/Map';
-import { StatusBar } from 'expo-status-bar';
-import SelectedScooterSheet from '~/components/SelectedScooterSheet';
+import { Redirect } from 'expo-router';
 
-export default function Home() {
-  return <Redirect href={'/auth'} />;
-  // return (
-  //   <>
-  //     <Stack.Screen options={{ title: 'Home', headerShown: false }} />
-  //     <Map />
-  //     <SelectedScooterSheet />
-  //     <StatusBar style="light" />
-  //   </>
-  // );
+export default function RootScreen() {
+  return <Redirect href={'/(home)/'} />;
 }
