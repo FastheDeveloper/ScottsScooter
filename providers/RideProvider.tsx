@@ -35,6 +35,7 @@ export default function RideProvider({ children }: PropsWithChildren) {
         .select('*')
         .eq('user_id', userId)
         .is('finished_at', null)
+        .limit(1)
         .single();
       if (data) {
         setRide(data);
