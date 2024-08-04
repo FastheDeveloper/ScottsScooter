@@ -9,9 +9,10 @@ import { Button } from './Button';
 import { supabase } from '~/lib/supabase';
 import Auth from '~/app/auth';
 import { useAuth } from '~/providers/AuthProvider';
+import { useRide } from '~/providers/RideProvider';
 export default function SelectedScooterSheet() {
   const { selectedScooter, routeTime, routeDistance, isNearby } = useScooter();
-  const { userId } = useAuth();
+  const { startRide } = useRide();
   const bottomSheetRef = useRef<BottomSheet>(null);
   useEffect(() => {
     if (selectedScooter) {
@@ -19,18 +20,9 @@ export default function SelectedScooterSheet() {
     }
   }, [selectedScooter]);
 
-  const startJourney = async () => {
-    const { data, error } = await supabase
-      .from('rides')
-      .insert([{ user_id: userId, scooter_id: selectedScooter?.id }])
-      .select();
-
-    if (error) {
-      Alert.alert('failed to start the ride');
-      console.log(error);
-    } else {
-      console.warn('Ride started');
-      console.log(data);
+  const handlePress = () => {
+    if (selectedScooter) {
+      startRide(selectedScooter?.id);
     }
   };
   return (
@@ -87,7 +79,7 @@ export default function SelectedScooterSheet() {
           <Button
             title="Start Journey"
             disabled={!isNearby}
-            onPress={startJourney}
+            onPress={handlePress}
             style={{
               backgroundColor: isNearby ? APP_COLOR.ACCENT_GREEN : APP_COLOR.MAIN_GREY,
               borderColor: !isNearby ? APP_COLOR.ACCENT_GREEN : 'red',
