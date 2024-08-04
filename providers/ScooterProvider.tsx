@@ -18,7 +18,7 @@ interface RPCScooterDetails {
   dist_meters: number;
 }
 interface ScooterContextType {
-  selectedScooter: ScooterDetails | undefined;
+  selectedScooter?: ScooterDetails;
   setSelectedScooter: React.Dispatch<React.SetStateAction<ScooterDetails | undefined>>;
   newDirection: DirectionsApi | undefined;
   directionCoordinates: number[][] | undefined;
