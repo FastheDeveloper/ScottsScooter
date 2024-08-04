@@ -24,7 +24,9 @@ export default function SelectedScooterSheet() {
     if (selectedScooter) {
       startRide(selectedScooter?.id);
     }
+    bottomSheetRef.current?.close();
   };
+
   return (
     <BottomSheet
       index={-1}

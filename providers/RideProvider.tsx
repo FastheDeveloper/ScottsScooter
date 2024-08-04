@@ -11,18 +11,22 @@ interface Ride {
   scooter_id: number;
   user_id: string; // Assuming it's a UUID or similar string
 }
+
 interface RideContextType {
   startRide: (scooterId: number) => void;
+  finishRide: (rideId: number) => void;
   ride?: Ride | null;
 }
 const RideContext = createContext<RideContextType>({
   startRide: () => {},
+  finishRide: () => {},
   ride: null,
 });
 
 export default function RideProvider({ children }: PropsWithChildren) {
   const [ride, setRide] = useState<null | Ride>();
   const { userId } = useAuth();
+  const { setNewDirection } = useScooter();
 
   useEffect(() => {
     const fetchActiveRide = async () => {
@@ -54,17 +58,35 @@ export default function RideProvider({ children }: PropsWithChildren) {
       Alert.alert('failed to start the ride');
       console.log(error);
     } else {
-      console.warn('Ride started');
       console.log(data);
       setRide(data[0] as Ride);
     }
   };
 
+  const finishRide = async (rideId: number) => {
+    if (!ride) {
+      return;
+    }
+    const { data, error } = await supabase
+      .from('rides')
+      .update({ finished_at: new Date() })
+      .eq('id', ride.id);
+
+    if (error) {
+      Alert.alert('failed to finish ride');
+      console.log(error);
+    } else {
+      setNewDirection(undefined);
+      setRide(null);
+      console.log(data);
+    }
+  };
   console.log('Current ride,:', ride);
   return (
     <RideContext.Provider
       value={{
         startRide,
+        finishRide,
         ride,
       }}>
       {children}
