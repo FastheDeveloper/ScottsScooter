@@ -4,15 +4,24 @@ import { useAuth } from './AuthProvider';
 import { Alert } from 'react-native';
 import { useScooter } from './ScooterProvider';
 
+interface Ride {
+  created_at: string; // ISO 8601 string format for date-time
+  finished_at: string | null; // Can be a date-time string or null
+  id: number;
+  scooter_id: number;
+  user_id: string; // Assuming it's a UUID or similar string
+}
 interface RideContextType {
   startRide: (scooterId: number) => void;
+  ride?: Ride | null;
 }
 const RideContext = createContext<RideContextType>({
   startRide: () => {},
+  ride: null,
 });
 
 export default function RideProvider({ children }: PropsWithChildren) {
-  const [ride, setRide] = useState<any[] | null>();
+  const [ride, setRide] = useState<null | Ride>();
   const { userId } = useAuth();
 
   useEffect(() => {
@@ -47,7 +56,7 @@ export default function RideProvider({ children }: PropsWithChildren) {
     } else {
       console.warn('Ride started');
       console.log(data);
-      setRide(data);
+      setRide(data[0] as Ride);
     }
   };
 
@@ -56,6 +65,7 @@ export default function RideProvider({ children }: PropsWithChildren) {
     <RideContext.Provider
       value={{
         startRide,
+        ride,
       }}>
       {children}
     </RideContext.Provider>
