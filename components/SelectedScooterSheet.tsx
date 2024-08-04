@@ -11,7 +11,14 @@ import Auth from '~/app/auth';
 import { useAuth } from '~/providers/AuthProvider';
 import { useRide } from '~/providers/RideProvider';
 export default function SelectedScooterSheet() {
-  const { selectedScooter, routeTime, routeDistance, isNearby } = useScooter();
+  const {
+    selectedScooter,
+    routeTime,
+    routeDistance,
+    isNearby,
+    setSelectedScooter,
+    setNewDirection,
+  } = useScooter();
   const { startRide } = useRide();
   const bottomSheetRef = useRef<BottomSheet>(null);
   useEffect(() => {
@@ -33,6 +40,10 @@ export default function SelectedScooterSheet() {
       snapPoints={[200]}
       enablePanDownToClose
       ref={bottomSheetRef}
+      onClose={() => {
+        setSelectedScooter(undefined);
+        setNewDirection(undefined);
+      }}
       backgroundStyle={{ backgroundColor: '#414442' }}
       handleIndicatorStyle={{ backgroundColor: APP_COLOR.MAIN_WHITE }}>
       {selectedScooter && (
