@@ -20,6 +20,7 @@ interface RPCScooterDetails {
 interface ScooterContextType {
   selectedScooter?: ScooterDetails;
   setSelectedScooter: React.Dispatch<React.SetStateAction<ScooterDetails | undefined>>;
+  setNewDirection: React.Dispatch<React.SetStateAction<DirectionsApi | undefined>>;
   newDirection: DirectionsApi | undefined;
   directionCoordinates: number[][] | undefined;
   routeTime: number | undefined;
@@ -106,6 +107,8 @@ export default function ScooterProvider({ children }: PropsWithChildren) {
         nearbyScooters,
         selectedScooter,
         setSelectedScooter,
+        setNewDirection,
+
         newDirection,
         directionCoordinates: newDirection?.routes?.[0].geometry.coordinates,
         routeTime: newDirection?.routes?.[0].duration,
