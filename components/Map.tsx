@@ -1,15 +1,6 @@
-import { StyleSheet, Text, View } from 'react-native';
-import React, { useState } from 'react';
-import MapBox, {
-  Camera,
-  CircleLayer,
-  Images,
-  LineLayer,
-  LocationPuck,
-  MapView,
-  ShapeSource,
-  SymbolLayer,
-} from '@rnmapbox/maps';
+import { StyleSheet } from 'react-native';
+import React from 'react';
+import MapBox, { Camera, LocationPuck, MapView } from '@rnmapbox/maps';
 
 import LineRoute from '~/components/LineRoute';
 import ScooterMarker from '~/components/ScooterMarkers';

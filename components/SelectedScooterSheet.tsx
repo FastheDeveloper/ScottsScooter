@@ -1,14 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import { Alert, Image, Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 import { useScooter } from '~/providers/ScooterProvider';
-import scooterImage from '~/assets/scooter.png';
+
 import { FontAwesome6 } from '@expo/vector-icons';
 import { APP_COLOR } from '~/constants/AppConstants';
 import { Button } from './Button';
-import { supabase } from '~/lib/supabase';
-import Auth from '~/app/auth';
-import { useAuth } from '~/providers/AuthProvider';
+
 import { useRide } from '~/providers/RideProvider';
 export default function SelectedScooterSheet() {
   const {
