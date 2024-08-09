@@ -7,7 +7,7 @@ import { Button } from './Button';
 export default function ActiveRideSheet() {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const { ride, finishRide } = useRide();
-  console.log(ride, 'rider');
+  // console.log(ride, 'rider');
 
   useEffect(() => {
     if (ride) {

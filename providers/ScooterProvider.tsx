@@ -46,7 +46,7 @@ export default function ScooterProvider({ children }: PropsWithChildren) {
           const from = point([newLocation.coords.longitude, newLocation.coords.latitude]);
           const to = point([selectedScooter.long, selectedScooter.lat]);
           const distance = getDistance(from, to, { units: 'meters' });
-          console.log(distance, ' dis');
+          // console.log(distance, ' dis');
           if (distance < 100) {
             setIsNearBy(true);
           } else if (distance > 100) {

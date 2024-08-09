@@ -1,4 +1,9 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
+import * as Location from 'expo-location';
+import { DirectionsApi, fetchDirectionBasedOnCoords, getDirections } from '~/utils/MapUtils';
+import getDistance from '@turf/distance';
+import { point } from '@turf/helpers';
+
 import { supabase } from '~/lib/supabase';
 import { useAuth } from './AuthProvider';
 import { Alert } from 'react-native';
@@ -16,6 +21,7 @@ interface RideContextType {
   startRide: (scooterId: number) => void;
   finishRide: (rideId: number) => void;
   ride?: Ride | null;
+  rideRoute?: number[][] | [];
 }
 const RideContext = createContext<RideContextType>({
   startRide: () => {},
@@ -25,6 +31,7 @@ const RideContext = createContext<RideContextType>({
 
 export default function RideProvider({ children }: PropsWithChildren) {
   const [ride, setRide] = useState<null | Ride>();
+  const [rideRoute, setRideRoute] = useState<number[][]>([]);
   const { userId } = useAuth();
   const { setNewDirection } = useScooter();
 
@@ -40,10 +47,36 @@ export default function RideProvider({ children }: PropsWithChildren) {
       if (data) {
         setRide(data);
       }
-      console.log(data, ' finise');
+      // console.log(data, ' finise');
     };
     fetchActiveRide();
   }, []);
+
+  useEffect(() => {
+    let subscription: Location.LocationSubscription | undefined;
+
+    const watchLocation = async () => {
+      subscription = await Location?.watchPositionAsync({ distanceInterval: 30 }, (newLocation) => {
+        setRideRoute((currRoute: number[][]) => [
+          ...currRoute,
+          [newLocation?.coords?.longitude, newLocation?.coords?.latitude],
+        ]);
+      });
+    };
+
+    if (ride) {
+      try {
+        watchLocation();
+      } catch (e) {
+        console.log(e, 'watch location');
+      }
+    }
+
+    // unsubscribe
+    return () => {
+      subscription?.remove();
+    };
+  }, [ride]);
 
   const startRide = async (scooterId: number) => {
     if (ride) {
@@ -68,10 +101,42 @@ export default function RideProvider({ children }: PropsWithChildren) {
     if (!ride) {
       return;
     }
-    const { data, error } = await supabase
-      .from('rides')
-      .update({ finished_at: new Date() })
-      .eq('id', ride.id);
+    const actualRoute = await fetchDirectionBasedOnCoords(rideRoute);
+    console.log(actualRoute.matchings[0]?.geometry.coordinates, 'Actual ride');
+    const rideRouteCoord = actualRoute?.matchings[0]?.geometry.coordinates;
+    const rideRouteDuration = actualRoute?.matchings[0]?.duration;
+    const rideRouteDistance = actualRoute?.matchings[0]?.distance;
+    console.log(rideRouteCoord, ' Ride route route');
+    if (rideRouteCoord) {
+      setRideRoute(rideRouteCoord);
+    }
+
+    // Construct the update object based on available values
+    const updateData: { [key: string]: any } = {
+      finished_at: new Date(), // Always update this field
+    };
+
+    // Conditionally add fields to the update object
+    if (rideRouteDuration !== undefined) {
+      updateData.routeDuration = rideRouteDuration;
+    } else {
+      updateData.routeDuration = null; // Set to null if needed
+    }
+
+    if (rideRouteDistance !== undefined) {
+      updateData.routeDistance = rideRouteDistance;
+    } else {
+      updateData.routeDistance = null; // Set to null if needed
+    }
+
+    if (rideRouteCoord !== undefined) {
+      updateData.routeCoords = rideRouteCoord;
+    } else {
+      updateData.routeCoords = null; // Set to null if needed
+    }
+
+    console.log(updateData, 'Data update');
+    const { data, error } = await supabase.from('rides').update(updateData).eq('id', ride.id);
 
     if (error) {
       Alert.alert('failed to finish ride');
@@ -82,13 +147,15 @@ export default function RideProvider({ children }: PropsWithChildren) {
       console.log(data);
     }
   };
-  console.log('Current ride,:', ride);
+
+  // console.log('Current ride,:', ride);
   return (
     <RideContext.Provider
       value={{
         startRide,
         finishRide,
         ride,
+        rideRoute,
       }}>
       {children}
     </RideContext.Provider>
