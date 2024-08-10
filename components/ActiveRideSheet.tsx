@@ -4,9 +4,11 @@ import { APP_COLOR } from '~/constants/AppConstants';
 import { useRide } from '~/providers/RideProvider';
 import { Text, View } from 'react-native';
 import { Button } from './Button';
+import { useScooter } from '~/providers/ScooterProvider';
 export default function ActiveRideSheet() {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const { ride, finishRide } = useRide();
+  const { selectedScooter } = useScooter();
   // console.log(ride, 'rider');
 
   useEffect(() => {
@@ -16,6 +18,14 @@ export default function ActiveRideSheet() {
       bottomSheetRef.current?.close();
     }
   }, [ride]);
+
+  const handlePress = () => {
+    if (selectedScooter) {
+      console.log(selectedScooter.id, ' finished scooter');
+      finishRide(selectedScooter?.id);
+    }
+    bottomSheetRef.current?.close();
+  };
 
   return (
     <BottomSheet
@@ -32,7 +42,7 @@ export default function ActiveRideSheet() {
           <View>
             <Button
               title="Finish Journey"
-              onPress={() => finishRide(ride.id)}
+              onPress={handlePress}
               style={{
                 backgroundColor: APP_COLOR.ACCENT_GREEN,
               }}
