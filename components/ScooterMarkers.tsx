@@ -6,6 +6,7 @@ import pin from '../assets/pin.png';
 import { OnPressEvent } from '@rnmapbox/maps/lib/typescript/src/types/OnPressEvent';
 import { useScooter } from '../providers/ScooterProvider';
 import { featureCollection, point } from '@turf/helpers';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // import scooters from '../data/scooter.json';
 
 export default function ScooterMarkers() {
@@ -18,6 +19,8 @@ export default function ScooterMarkers() {
   const onLocationPressed = async (event: OnPressEvent) => {
     if (event.features[0].properties?.scooter)
       setSelectedScooter(event.features[0].properties.scooter);
+    const jsonValue = JSON.stringify(event.features[0].properties?.scooter);
+    await AsyncStorage.setItem('lastSelectedScooter', jsonValue);
   };
 
   return (

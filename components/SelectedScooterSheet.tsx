@@ -39,7 +39,7 @@ export default function SelectedScooterSheet() {
       enablePanDownToClose
       ref={bottomSheetRef}
       onClose={() => {
-        setSelectedScooter(undefined);
+        // setSelectedScooter(undefined);
         setNewDirection(undefined);
       }}
       backgroundStyle={{ backgroundColor: '#414442' }}

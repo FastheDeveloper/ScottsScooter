@@ -3,10 +3,16 @@ import { LineLayer, ShapeSource } from '@rnmapbox/maps';
 import { APP_COLOR } from '../constants/AppConstants';
 import { Position } from '@rnmapbox/maps/lib/typescript/src/types/Position';
 
-export default function LineRoute({ coordinates }: { coordinates: Position[] }) {
+export default function LineRoute({
+  coordinates,
+  id = 'rideSource',
+}: {
+  coordinates: Position[];
+  id?: string;
+}) {
   return (
     <ShapeSource
-      id="routeSource"
+      id={id}
       lineMetrics
       shape={{
         properties: {},

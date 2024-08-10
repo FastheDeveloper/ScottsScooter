@@ -5,6 +5,8 @@ import getDistance from '@turf/distance';
 import { point } from '@turf/helpers';
 import { supabase } from '~/lib/supabase';
 import { Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export interface ScooterDetails {
   id: number;
   lat: number;
@@ -27,6 +29,7 @@ interface ScooterContextType {
   routeDistance: number | undefined;
   isNearby: boolean;
   nearbyScooters: RPCScooterDetails[];
+  fetchScooters: () => {};
 }
 
 const ScooterContext = createContext<ScooterContextType | null>(null);
@@ -46,7 +49,7 @@ export default function ScooterProvider({ children }: PropsWithChildren) {
           const from = point([newLocation.coords.longitude, newLocation.coords.latitude]);
           const to = point([selectedScooter.long, selectedScooter.lat]);
           const distance = getDistance(from, to, { units: 'meters' });
-          console.log(distance, ' dis');
+          // console.log(distance, ' dis');
           if (distance < 100) {
             setIsNearBy(true);
           } else if (distance > 100) {
@@ -85,20 +88,34 @@ export default function ScooterProvider({ children }: PropsWithChildren) {
   }, [selectedScooter]);
 
   useEffect(() => {
-    const fetchScooters = async () => {
-      const location = await Location.getCurrentPositionAsync();
-      const { error, data } = await supabase.rpc('nearby_scooters', {
-        lat: location.coords.latitude,
-        long: location.coords.longitude,
-        // max_dist_meters: 2000,
-      });
-      if (error) {
-        Alert.alert('Failed to fetch scooter');
-      } else {
-        setNearByScooter(data);
+    const checklastUsedScooter = async () => {
+      const selScoot = await AsyncStorage.getItem('lastSelectedScooter');
+      console.log('Last used scooter', selScoot);
+      if (selScoot) {
+        const sanitisedScooter = JSON.parse(selScoot);
+        setSelectedScooter(sanitisedScooter);
       }
     };
 
+    checklastUsedScooter();
+  }, []);
+  const fetchScooters = async () => {
+    const location = await Location.getCurrentPositionAsync();
+    const { error, data } = await supabase.rpc('nearby_scooters', {
+      lat: location.coords.latitude,
+      long: location.coords.longitude,
+      // max_dist_meters: 2000,
+    });
+    if (error) {
+      Alert.alert('Failed to fetch scooter');
+    } else {
+      Alert.alert('Scooters fetched ');
+
+      setNearByScooter(data);
+    }
+  };
+
+  useEffect(() => {
     fetchScooters();
   }, []);
   return (
@@ -108,7 +125,7 @@ export default function ScooterProvider({ children }: PropsWithChildren) {
         selectedScooter,
         setSelectedScooter,
         setNewDirection,
-
+        fetchScooters,
         newDirection,
         directionCoordinates: newDirection?.routes?.[0].geometry.coordinates,
         routeTime: newDirection?.routes?.[0].duration,
