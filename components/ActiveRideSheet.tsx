@@ -8,7 +8,7 @@ import { useScooter } from '~/providers/ScooterProvider';
 export default function ActiveRideSheet() {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const { ride, finishRide } = useRide();
-  const { selectedScooter } = useScooter();
+  const { selectedScooter, fetchScooters } = useScooter();
   // console.log(ride, 'rider');
 
   useEffect(() => {

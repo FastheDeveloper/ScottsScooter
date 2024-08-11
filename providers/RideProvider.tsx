@@ -1,13 +1,14 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 import * as Location from 'expo-location';
 import { DirectionsApi, fetchDirectionBasedOnCoords, getDirections } from '~/utils/MapUtils';
-import getDistance from '@turf/distance';
-import { point } from '@turf/helpers';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { supabase } from '~/lib/supabase';
 import { useAuth } from './AuthProvider';
 import { Alert } from 'react-native';
 import { useScooter } from './ScooterProvider';
+import { RideStartedModal } from '~/components/modals/RideStartedModal';
+import { TWithModal, withModal } from './ModalProvider';
 
 interface Ride {
   created_at: string; // ISO 8601 string format for date-time
@@ -29,11 +30,11 @@ const RideContext = createContext<RideContextType>({
   ride: null,
 });
 
-export default function RideProvider({ children }: PropsWithChildren) {
+function RideProvider({ children, openModal }: PropsWithChildren<TWithModal>) {
   const [ride, setRide] = useState<null | Ride>();
   const [rideRoute, setRideRoute] = useState<number[][]>([]);
   const { userId } = useAuth();
-  const { setNewDirection, fetchScooters } = useScooter();
+  const { setNewDirection, fetchScooters, setSelectedScooter } = useScooter();
 
   useEffect(() => {
     const fetchActiveRide = async () => {
@@ -79,6 +80,19 @@ export default function RideProvider({ children }: PropsWithChildren) {
     };
   }, [ride]);
 
+  useEffect(() => {
+    const checklastUsedScooter = async () => {
+      const selScoot = await AsyncStorage.getItem('lastSelectedScooter');
+      console.log('Last used scooter', selScoot);
+      if (selScoot) {
+        const sanitisedScooter = JSON.parse(selScoot);
+        setSelectedScooter(sanitisedScooter);
+      }
+    };
+    if (ride) {
+      checklastUsedScooter();
+    }
+  }, [ride]);
   const startRide = async (scooterId: number) => {
     console.log(scooterId, 'start ride');
     if (ride) {
@@ -106,9 +120,16 @@ export default function RideProvider({ children }: PropsWithChildren) {
     // }
 
     if (error) {
-      Alert.alert('failed to start the ride');
+      openModal?.(<RideStartedModal text="Couldnt start ride" />, {
+        transparent: true,
+        animationType: 'none',
+      });
       console.log(error);
     } else {
+      openModal?.(<RideStartedModal text="Ride Started Successfully" />, {
+        transparent: true,
+        animationType: 'none',
+      });
       console.log(data);
       setRide(data[0] as Ride);
     }
@@ -153,9 +174,16 @@ export default function RideProvider({ children }: PropsWithChildren) {
       .eq('id', ride.id);
 
     if (rideError) {
-      Alert.alert('failed to finish ride');
+      openModal?.(<RideStartedModal text="Failed to complete ride" />, {
+        transparent: true,
+        animationType: 'none',
+      });
       console.log(rideError);
     } else {
+      openModal?.(<RideStartedModal text="Ride Completed Successfully" />, {
+        transparent: true,
+        animationType: 'none',
+      });
       setNewDirection(undefined);
       setRide(null);
       console.log(rideData);
@@ -190,5 +218,5 @@ export default function RideProvider({ children }: PropsWithChildren) {
     </RideContext.Provider>
   );
 }
-
+export default withModal(RideProvider);
 export const useRide = () => useContext(RideContext);

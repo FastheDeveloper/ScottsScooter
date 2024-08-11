@@ -1,29 +1,44 @@
 import { Fragment } from 'react';
-import { Platform, StyleSheet, View, Text } from 'react-native';
+import { Platform, StyleSheet, View, Text, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { withModal } from '~/providers/ModalProvider';
+import { APP_COLOR } from '~/constants/AppConstants';
+import { TWithModal, withModal } from '~/providers/ModalProvider';
+import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 
-export const RideStartedModal = withModal(({ closeModal }) => {
-  const insets = useSafeAreaInsets();
-  const marginTop = Platform.select({
-    ios: 115 + insets.top,
-    android: 115 + insets.top,
-    default: 0,
-  });
+interface RideStartedModalProps {
+  text?: string;
+}
 
-  return (
-    <Fragment>
-      <View style={s.root}>
-        <View style={[s.container, { marginVertical: marginTop }]}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text> MODAL IS MODALLING</Text>
-            <Text onPress={closeModal}>X</Text>
+export const RideStartedModal: React.FC<RideStartedModalProps> = withModal(
+  ({ closeModal, text }) => {
+    const insets = useSafeAreaInsets();
+    const marginTop = Platform.select({
+      ios: 115 + insets.top,
+      android: 115 + insets.top,
+      default: 0,
+    });
+
+    return (
+      <Fragment>
+        <Pressable style={s.root} onPress={closeModal}>
+          <View style={[s.container, { marginVertical: marginTop * 2, marginHorizontal: '5%' }]}>
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+
+                flex: 1,
+              }}>
+              <Text style={{ fontStyle: 'italic', fontSize: RFPercentage(3), textAlign: 'center' }}>
+                {text}
+              </Text>
+            </View>
           </View>
-        </View>
-      </View>
-    </Fragment>
-  );
-});
+        </Pressable>
+      </Fragment>
+    );
+  }
+);
 
 const s = StyleSheet.create({
   border: {
@@ -35,6 +50,9 @@ const s = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: 'red',
+    backgroundColor: APP_COLOR.MAIN_WHITE,
+    height: '30%',
+    borderRadius: 20,
+    padding: '5%',
   },
 });

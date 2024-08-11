@@ -5,7 +5,10 @@ import getDistance from '@turf/distance';
 import { point } from '@turf/helpers';
 import { supabase } from '~/lib/supabase';
 import { Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { useRide } from './RideProvider';
+import { TWithModal, withModal } from './ModalProvider';
+import { RideStartedModal } from '~/components/modals/RideStartedModal';
 
 export interface ScooterDetails {
   id: number;
@@ -34,7 +37,7 @@ interface ScooterContextType {
 
 const ScooterContext = createContext<ScooterContextType | null>(null);
 
-export default function ScooterProvider({ children }: PropsWithChildren) {
+function ScooterProvider({ children, openModal }: PropsWithChildren<TWithModal>) {
   const [nearbyScooters, setNearByScooter] = useState<RPCScooterDetails[]>([]);
   const [selectedScooter, setSelectedScooter] = useState<ScooterDetails>();
   const [newDirection, setNewDirection] = useState<DirectionsApi>();
@@ -87,18 +90,6 @@ export default function ScooterProvider({ children }: PropsWithChildren) {
     }
   }, [selectedScooter]);
 
-  useEffect(() => {
-    const checklastUsedScooter = async () => {
-      const selScoot = await AsyncStorage.getItem('lastSelectedScooter');
-      console.log('Last used scooter', selScoot);
-      if (selScoot) {
-        const sanitisedScooter = JSON.parse(selScoot);
-        setSelectedScooter(sanitisedScooter);
-      }
-    };
-
-    checklastUsedScooter();
-  }, []);
   const fetchScooters = async () => {
     const location = await Location.getCurrentPositionAsync();
     const { error, data } = await supabase.rpc('nearby_scooters', {
@@ -107,9 +98,15 @@ export default function ScooterProvider({ children }: PropsWithChildren) {
       // max_dist_meters: 2000,
     });
     if (error) {
-      Alert.alert('Failed to fetch scooter');
+      openModal?.(<RideStartedModal text="Failed to retrieve scooters" />, {
+        transparent: true,
+        animationType: 'none',
+      });
     } else {
-      Alert.alert('Scooters fetched ');
+      openModal?.(<RideStartedModal text="All Scooters Fetched" />, {
+        transparent: true,
+        animationType: 'none',
+      });
 
       setNearByScooter(data);
     }
@@ -137,6 +134,7 @@ export default function ScooterProvider({ children }: PropsWithChildren) {
   );
 }
 
+export default withModal(ScooterProvider);
 export const useScooter = () => {
   const context = useContext(ScooterContext);
   if (!context) {
