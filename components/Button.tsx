@@ -3,18 +3,8 @@ import { StyleSheet, Text, TouchableOpacity, TouchableOpacityProps } from 'react
 import { APP_COLOR } from '~/constants/AppConstants';
 
 type ButtonProps = {
-  title?: string;
+  title: string;
 } & TouchableOpacityProps;
-
-export const Button = forwardRef<TouchableOpacity, ButtonProps>(
-  ({ title, ...touchableProps }, ref) => {
-    return (
-      <TouchableOpacity ref={ref} {...touchableProps} style={[styles.button, touchableProps.style]}>
-        <Text style={styles.buttonText}>{title}</Text>
-      </TouchableOpacity>
-    );
-  }
-);
 
 const styles = StyleSheet.create({
   button: {
@@ -40,3 +30,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
+export const Button = forwardRef<TouchableOpacity, ButtonProps>(
+  ({ title, ...touchableProps }, ref) => {
+    return (
+      <TouchableOpacity ref={ref} {...touchableProps} style={[styles.button, touchableProps.style]}>
+        <Text
+          style={[
+            styles.buttonText,
+            { color: title === 'Sign up' ? APP_COLOR.ACCENT_GREEN : APP_COLOR.MAIN_WHITE },
+          ]}>
+          {title}
+        </Text>
+      </TouchableOpacity>
+    );
+  }
+);
