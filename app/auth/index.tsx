@@ -64,7 +64,7 @@ export default function Auth() {
       alignSelf: 'stretch',
     },
     mt20: {
-      marginTop: 20,
+      marginTop: 40,
     },
   });
 

@@ -19,6 +19,7 @@ export default function SelectedScooterSheet() {
   } = useScooter();
   const { startRide } = useRide();
   const bottomSheetRef = useRef<BottomSheet>(null);
+
   useEffect(() => {
     if (selectedScooter) {
       bottomSheetRef.current?.expand();

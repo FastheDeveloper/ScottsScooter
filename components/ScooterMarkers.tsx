@@ -7,9 +7,11 @@ import { OnPressEvent } from '@rnmapbox/maps/lib/typescript/src/types/OnPressEve
 import { useScooter } from '../providers/ScooterProvider';
 import { featureCollection, point } from '@turf/helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { TWithModal, withModal } from '~/providers/ModalProvider';
+import { RideStartedModal } from './modals/RideStartedModal';
 // import scooters from '../data/scooter.json';
 
-export default function ScooterMarkers() {
+function ScooterMarkers({ openModal, closeModal }: TWithModal) {
   const { setSelectedScooter, nearbyScooters } = useScooter();
 
   const points = nearbyScooters?.map((scooter: { long: number; lat: number }) =>
@@ -17,6 +19,7 @@ export default function ScooterMarkers() {
   );
 
   const onLocationPressed = async (event: OnPressEvent) => {
+    openModal?.(<RideStartedModal />, { transparent: true, animationType: 'fade' });
     if (event.features[0].properties?.scooter)
       setSelectedScooter(event.features[0].properties.scooter);
     const jsonValue = JSON.stringify(event.features[0].properties?.scooter);
@@ -66,3 +69,5 @@ export default function ScooterMarkers() {
     </ShapeSource>
   );
 }
+
+export default withModal(ScooterMarkers);
