@@ -44,8 +44,8 @@ interface Geo {
 
 interface Matching {
   confidence: number;
-  geometry: Geo; // Replace `any` with the actual type if known
-  legs: any[]; // Replace `any` with the actual type if known
+  geometry: Geo;
+  legs: any[];
   weight_name: string;
   weight: number;
   duration: number;
