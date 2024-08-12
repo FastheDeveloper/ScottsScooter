@@ -37,7 +37,8 @@ export default function ActiveRideSheet() {
       handleIndicatorStyle={{ backgroundColor: APP_COLOR.MAIN_WHITE }}>
       {ride && (
         <BottomSheetView style={{ flex: 1, padding: 10, gap: 20 }}>
-          <Text>{ride.id} in progress</Text>
+          {/* <Text>{ride.id} in progress</Text> */}
+          <Text></Text>
 
           <View>
             <Button
