@@ -19,7 +19,6 @@ function ScooterMarkers({ openModal, closeModal }: TWithModal) {
   );
 
   const onLocationPressed = async (event: OnPressEvent) => {
-    openModal?.(<RideStartedModal />, { transparent: true, animationType: 'none' });
     if (event.features[0].properties?.scooter)
       setSelectedScooter(event.features[0].properties.scooter);
     const jsonValue = JSON.stringify(event.features[0].properties?.scooter);
