@@ -17,11 +17,11 @@ export default function SelectedScooterSheet() {
     setSelectedScooter,
     setNewDirection,
   } = useScooter();
-  const { startRide } = useRide();
+  const { startRide, ride } = useRide();
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   useEffect(() => {
-    if (selectedScooter) {
+    if (selectedScooter && !ride) {
       bottomSheetRef.current?.expand();
     }
   }, [selectedScooter]);
